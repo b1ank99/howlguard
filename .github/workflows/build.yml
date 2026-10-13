@@ -19,7 +19,7 @@ jobs:
       - name: Simulation, balance, and real socket tests
         run: |
           set -euo pipefail
-          for suite in test_rules test_balance test_transport; do
+          for suite in test_rules test_balance test_transport test_client; do
             godot --headless --script "res://tests/$suite.gd" 2>&1 | tee /tmp/test.log
             if grep -E 'SCRIPT ERROR:|FAIL:' /tmp/test.log; then exit 1; fi
           done
@@ -53,7 +53,7 @@ jobs:
           packages: 'platform-tools'
       - name: Install SDK packages and debug key
         run: |
-          sdkmanager "platform-tools" "build-tools;35.0.1" "platforms;android-36" "ndk;28.1.13356709" "cmake;3.10.2.4988404"
+          sdkmanager "platform-tools" "build-tools;36.1.0" "platforms;android-36" "ndk;29.0.14206865" "cmake;3.10.2.4988404"
           mkdir -p "$HOME/.android"
           if [ ! -f "$HOME/.android/debug.keystore" ]; then
             keytool -genkeypair -keystore "$HOME/.android/debug.keystore" -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 10000
@@ -64,8 +64,8 @@ jobs:
       - name: Install matching Gradle template and Android 16 configuration
         run: |
           mkdir -p android/build
-          unzip -q "$HOME/.local/share/godot/export_templates/4.6.stable/android_source.zip" -d android/build
-          printf '4.6.stable' > android/.build_version
+          unzip -q "$HOME/.local/share/godot/export_templates/4.7.2.stable/android_source.zip" -d android/build
+          printf '4.7.2.stable' > android/.build_version
           chmod +x android/build/gradlew
           python3 tools/prepare-gradle.py
       - name: Export sideload APK (not a Play release)

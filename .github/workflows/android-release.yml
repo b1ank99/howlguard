@@ -17,15 +17,15 @@ jobs:
       - uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools'
-      - run: sdkmanager "platform-tools" "build-tools;35.0.1" "platforms;android-36" "ndk;28.1.13356709" "cmake;3.10.2.4988404"
+      - run: sdkmanager "platform-tools" "build-tools;36.1.0" "platforms;android-36" "ndk;29.0.14206865" "cmake;3.10.2.4988404"
       - run: bash tools/install-godot.sh
       - run: python3 tools/configure-android.py
       - run: godot --headless --editor --import --quit
       - name: Install matching Android Gradle source
         run: |
           mkdir -p android/build
-          unzip -q "$HOME/.local/share/godot/export_templates/4.6.stable/android_source.zip" -d android/build
-          printf '4.6.stable' > android/.build_version
+          unzip -q "$HOME/.local/share/godot/export_templates/4.7.2.stable/android_source.zip" -d android/build
+          printf '4.7.2.stable' > android/.build_version
           chmod +x android/build/gradlew
           python3 tools/prepare-gradle.py
       - name: Decode private upload key
