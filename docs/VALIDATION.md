@@ -13,6 +13,7 @@ Local machine: Windows x86-64; official **Godot 4.7.2.stable.official.ed1daf0bf*
 | Windows release export | Produced x86-64 executable with embedded pack; exported client and server mode both started successfully |
 | Linux dedicated-server export | Produced x86-64 binary; not run on Linux locally |
 | Android APK/AAB | No local Android SDK/JDK/device; not built or tested locally |
+| GitHub CI build | [Run 4](https://github.com/b1ank99/howlguard/actions/runs/38350317855) succeeded: all four suites, Windows export, Linux server startup and Android debug APK export |
 | Public WSS / carrier networks / two physical phones | Not performed; needs a deployed host and devices |
 | Store submission | Not performed |
 
@@ -20,4 +21,6 @@ The restricted execution environment reports failure to read the Windows system 
 
 The visual fixture fabricates a game snapshot solely for layout inspection. Its “Online” label is not evidence of an online hosted session. The separate transport tests exercise real sockets. The generous-funds combat fixture tests ten-wave completion; the separate balance test uses only legal commands and standard starting money.
 
-No mobile usability review, external security audit, internet load test or accessibility certification is claimed. GitHub workflows must run after upload before their artifacts can be treated as verified CI builds.
+The verified Android APK is available in the successful run's `howlguard-android-debug` artifact. The automated browser download stalled, so no local APK copy or separate manifest/device inspection is claimed. The configured export targets API 36; verify the final manifest on a device/with Android tools before release. No signed release AAB was generated because an owner-controlled upload key has not been supplied.
+
+No mobile usability review, external security audit, internet load test or accessibility certification is claimed. The tested CI source commit is `dc32ccd`; subsequent documentation-only commits do not change the tested implementation.
