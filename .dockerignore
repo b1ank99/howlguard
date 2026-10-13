@@ -1,0 +1,11 @@
+.git
+.godot
+build
+android
+tests
+docs
+.github
+*.keystore
+*.jks
+.env
+export_credentials.cfg
