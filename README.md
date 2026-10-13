@@ -1,6 +1,6 @@
 # Howlguard: Night Orchard
 
-An original 2–4 player cooperative tower defense MVP for **Godot 4.6**, Windows and Android. A pack of dogs protects an orchard shelter from a zombie trail. Art is drawn directly from original geometric shapes; no external game assets are used.
+An original 2–4 player cooperative tower defense MVP for **Godot 4.7.2**, Windows and Android. A pack of dogs protects an orchard shelter from a zombie trail. Art is drawn directly from original geometric shapes; no external game assets are used.
 
 **Status:** source and Windows/Linux exports prepared. Local simulation and real WebSocket tests pass. A public server has not been deployed and Google Play has not been submitted. Android device testing is still required. See [validation](docs/VALIDATION.md) for exactly what was verified.
 
@@ -18,7 +18,7 @@ Two windows on one PC are a local smoke test. **Windows plus two phones on diffe
 
 ## Run from source
 
-Install Godot **4.6 stable, standard edition** (not .NET), import `project.godot`, and press F6/F5. No plugins or assets need downloading.
+Install Godot **4.7.2 stable, standard edition** (not .NET), import `project.godot`, and press F6/F5. No plugins or assets need downloading.
 
 Start the authoritative server in a separate terminal:
 
@@ -54,6 +54,7 @@ See [architecture and protocol](docs/ARCHITECTURE.md), [hosting/cost](docs/HOSTI
 godot --headless --path . --script res://tests/test_rules.gd
 godot --headless --path . --script res://tests/test_balance.gd
 godot --headless --path . --script res://tests/test_transport.gd
+godot --headless --path . --script res://tests/test_client.gd
 ```
 
 On PowerShell: `./tools/test.ps1 -Godot /path/to/godot.exe`. The transport suite binds loopback TCP 19080; this port must be available. It runs a server and independent WebSocket clients in one process using actual sockets. It does not pretend to be a physical phone test.
