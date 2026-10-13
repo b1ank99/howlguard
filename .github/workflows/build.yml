@@ -1,0 +1,74 @@
+name: Test and build MVP
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Godot and official templates
+        run: bash tools/install-godot.sh
+      - name: Import project
+        run: godot --headless --editor --import --quit
+      - name: Simulation, balance, and real socket tests
+        run: |
+          set -euo pipefail
+          for suite in test_rules test_balance test_transport; do
+            godot --headless --script "res://tests/$suite.gd" 2>&1 | tee /tmp/test.log
+            if grep -E 'SCRIPT ERROR:|FAIL:' /tmp/test.log; then exit 1; fi
+          done
+      - name: Export Windows and headless Linux server
+        run: |
+          mkdir -p build/windows build/server
+          godot --headless --export-release "Windows Desktop" build/windows/Howlguard.exe
+          godot --headless --export-release "Linux Server" build/server/howlguard-server.x86_64
+          chmod +x build/server/howlguard-server.x86_64
+          build/server/howlguard-server.x86_64 --headless --quit-after 15
+          cp tools/start-local-server.cmd build/windows/
+          mkdir -p build/windows/licenses build/server/licenses
+          cp docs/licenses/* build/windows/licenses/
+          cp docs/licenses/* build/server/licenses/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: howlguard-windows-and-server
+          path: build/
+  android-debug:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    needs: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install SDK packages and debug key
+        run: |
+          sdkmanager "platform-tools" "build-tools;35.0.1" "platforms;android-36" "ndk;28.1.13356709" "cmake;3.10.2.4988404"
+          mkdir -p "$HOME/.android"
+          keytool -genkeypair -keystore "$HOME/.android/debug.keystore" -storepass android -keypass android -alias androiddebugkey -dname "CN=Android Debug,O=Android,C=US" -keyalg RSA -keysize 2048 -validity 10000
+      - run: bash tools/install-godot.sh
+      - run: python3 tools/configure-android.py
+      - run: godot --headless --editor --import --quit
+      - name: Install matching Gradle template and Android 16 configuration
+        run: |
+          mkdir -p android/build
+          unzip -q "$HOME/.local/share/godot/export_templates/4.6.stable/android_source.zip" -d android/build
+          printf '4.6.stable' > android/.build_version
+          chmod +x android/build/gradlew
+          python3 tools/prepare-gradle.py
+      - name: Export sideload APK (not a Play release)
+        run: |
+          mkdir -p build/android
+          godot --headless --export-debug "Android APK" build/android/howlguard-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: howlguard-android-debug
+          path: build/android/*.apk
