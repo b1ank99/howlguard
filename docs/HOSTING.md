@@ -16,7 +16,7 @@ docker compose -f deploy/compose.yml logs -f game caddy
 
 Use an actual DNS name you control, not the example above. Caddy terminates trusted TLS and proxies WebSocket upgrade connections to the internal server. Its certificate state persists in named volumes. Every Windows and Android player enters `wss://play.your-real-domain.example`, creates/joins the same room, and requires no LAN membership or router forwarding.
 
-The Docker image uses the pinned official Godot 4.6 x86-64 engine. Source and scripts are baked into the image. The game container has a read-only filesystem, a disposable home/temp directory and limited CPU/RAM. Caddy remains writable for automatic certificates. Engine binaries and base/container tags should be checksum/digest pinned and scanned before a production rollout.
+The Docker image uses the pinned official Godot 4.7.2 x86-64 engine. Source and scripts are baked into the image. The game container has a read-only filesystem, a disposable home/temp directory and limited CPU/RAM. Caddy remains writable for automatic certificates. Engine binaries and base/container tags should be checksum/digest pinned and scanned before a production rollout.
 
 Stop/rebuild when no players are in matches. Server state is memory-only: container restart erases rooms and tokens. There is no deployment or database migration automation.
 

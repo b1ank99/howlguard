@@ -1,6 +1,6 @@
 # Validation record
 
-Local machine: Windows x86-64; official **Godot 4.6.stable.official.89cea1439**, Compatibility renderer, NVIDIA GPU. Date: 13 October 2026 (Asia/Kuala_Lumpur).
+Local machine: Windows x86-64; official **Godot 4.7.2.stable.official.ed1daf0bf**, Compatibility renderer, NVIDIA GPU. Date: 13 October 2026 (Asia/Kuala_Lumpur). All four suites were rerun successfully after upgrading from 4.6 for supported Android API 36 exports.
 
 | Check | Local result |
 |---|---|
@@ -8,6 +8,7 @@ Local machine: Windows x86-64; official **Godot 4.6.stable.official.89cea1439**,
 | Rules/room tests | 39 checks passed again after final implementation edits |
 | Standard-budget strategy | Won ten waves; 24 shelter health remaining; 12 dogs; about 319 simulated seconds |
 | Real loopback WebSocket suite | 10 checks passed: four connections, shared cash/towers, start, fresh-socket resume and malformed JSON |
+| Actual client networking | 10 checks: three shipped client nodes, automatic reconnect, preserved ownership and acknowledged room leave |
 | GPU render fixture | Captured actual game UI and visually inspected |
 | Windows release export | Produced x86-64 executable with embedded pack; exported client and server mode both started successfully |
 | Linux dedicated-server export | Produced x86-64 binary; not run on Linux locally |
