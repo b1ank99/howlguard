@@ -17,6 +17,8 @@ var ping_timer = 0.0
 var connecting_age = 0.0
 var last_receive = 0.0
 var intentional = false
+var leaving = false
+var leave_age = 0.0
 
 func _ready() -> void:
 	var config = ConfigFile.new()
@@ -36,6 +38,10 @@ func save() -> void:
 
 func connect_room(url: String, name_value: String, op: String, room_code: String) -> void:
 	if ws != null: ws.close()
+	leaving = false
+	leave_age = 0
+	retry = 0
+	player_id = ""
 	endpoint = url.strip_edges()
 	player_name = name_value.strip_edges()
 	intent = {"op":op,"version":VERSION,"name":player_name,"code":room_code.strip_edges().to_upper()}
@@ -75,14 +81,18 @@ func send(message: Dictionary) -> void:
 func leave() -> void:
 	send({"op":"leave"})
 	intentional = true
+	leaving = ws != null and ws.get_ready_state() == WebSocketPeer.STATE_OPEN
+	leave_age = 0
 	code = ""
 	token = ""
 	player_id = ""
 	state = {}
-	status = "Offline"
+	status = "Leaving…" if leaving else "Offline"
 	retry = 0
 	save()
-	if ws != null: ws.close()
+	# Keep polling until the server acknowledges leave; closing immediately can
+	# discard the queued command and accidentally leave a reserved room seat.
+	if ws != null and not leaving: ws.close()
 	changed.emit()
 
 func _process(delta: float) -> void:
@@ -92,6 +102,11 @@ func _process(delta: float) -> void:
 			if retry <= 0: open_socket()
 		return
 	ws.poll()
+	if leaving:
+		leave_age += delta
+		if leave_age >= 2.0:
+			ws.close()
+			leaving = false
 	connecting_age += delta
 	last_receive += delta
 	var ready = ws.get_ready_state()
@@ -115,7 +130,12 @@ func _process(delta: float) -> void:
 				if intent.get("op") in ["create","join","resume"] and player_id.is_empty():
 					intentional = true
 					ws.close()
-			elif msg.get("op") == "joined":
+			elif msg.get("op") == "left":
+				ws.close()
+				leaving = false
+				status = "Offline"
+				changed.emit()
+			elif msg.get("op") == "joined" and not intentional:
 				code = msg.code
 				player_id = msg.id
 				token = msg.token
@@ -123,11 +143,12 @@ func _process(delta: float) -> void:
 				status = "Online"
 				save()
 				changed.emit()
-			elif msg.get("op") == "state":
+			elif msg.get("op") == "state" and not intentional:
 				state = msg
 				changed.emit()
 	if ready == WebSocketPeer.STATE_CLOSED:
 		ws = null
+		leaving = false
 		player_id = ""
 		if not intentional and not token.is_empty() and attempts < 12:
 			attempts += 1
