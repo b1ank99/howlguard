@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-version=4.6
+version=4.7.2
 base="https://github.com/godotengine/godot/releases/download/${version}-stable"
 curl --fail --location --retry 3 "$base/Godot_v${version}-stable_linux.x86_64.zip" -o /tmp/godot.zip
 unzip -q /tmp/godot.zip -d /tmp/godot-bin

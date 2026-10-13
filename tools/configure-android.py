@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import json
 
-settings = Path.home() / ".config/godot/editor_settings-4.6.tres"
+settings = Path.home() / ".config/godot/editor_settings-4.7.tres"
 settings.parent.mkdir(parents=True, exist_ok=True)
 sdk = os.environ["ANDROID_HOME"]
 java = os.environ["JAVA_HOME"]
